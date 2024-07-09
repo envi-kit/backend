@@ -6,13 +6,15 @@ import {
     Patch,
     Param,
     Delete,
-    NotFoundException
+    NotFoundException,
+    UseGuards
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm'
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 
 @Controller('user')
 export class UserController {
@@ -31,8 +33,6 @@ export class UserController {
     @Get(':id')
     async findOne(@Param('id') id: string) {
         let user: User = await this.userService.findOne(+id)
-
-        console.log(user)
 
         if (user) return user
         else throw new NotFoundException()

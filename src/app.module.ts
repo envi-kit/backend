@@ -5,23 +5,38 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { NotificationModule } from './notification/notification.module';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            envFilePath: '.env',
+            isGlobal: true
+        }),
         TypeOrmModule.forRoot({
             type: 'mysql',
-            host: '185.125.200.170',
-            port: 3306,
-            username: 'root',
-            password: 'dys*qWj7^V7PtL',
-            database: 'envi',
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT),
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
             entities: [User],
             synchronize: true,
         }),
         UserModule,
         NotificationModule,
+        AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService]
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard
+        }
+    ]
 })
 export class AppModule {}
