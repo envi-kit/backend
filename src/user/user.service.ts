@@ -13,9 +13,9 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<InsertResult> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
-    return this.userRepository.insert(createUserDto);
+    return this.userRepository.save(createUserDto);
   }
 
   findAll(): Promise<User[]> {

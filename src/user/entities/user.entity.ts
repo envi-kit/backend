@@ -12,14 +12,20 @@ export class User {
     @Column({ unique: true })
     email: string
 
-    @Column({ default: '' })
+    @Column({ default: 'SharjaMale1' })
     avatarModelName: string
 
-    @Column({ default: '' })
+    @Column({ default: 'default.png' })
     iconPicture: string
 
     @Column({ default: 'en' })
     language: string
+
+    @Column({ default: true })
+    showNicknames: boolean
+
+    @Column({ default: true })
+    enableMusic: boolean
 
     @Column({ default: "visitor" })
     role: string
