@@ -9,6 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ConfigModule } from '@nestjs/config';
+import { SceneModule } from './scene/scene.module';
+import { Scene } from './scene/entities/scene.entity';
+import { Screen } from './scene/entities/environment.objects/screen.entity';
+import { Stand } from './scene/entities/environment.objects/stand.entity';
 
 @Module({
     imports: [
@@ -23,12 +27,13 @@ import { ConfigModule } from '@nestjs/config';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            entities: [User],
+            entities: [User, Scene, Screen, Stand],
             synchronize: true,
         }),
         UserModule,
         NotificationModule,
         AuthModule,
+        SceneModule,
     ],
     controllers: [AppController],
     providers: [
