@@ -32,7 +32,7 @@ export class UserController {
 
     @Get(':id')
     async findOne(@Param('id') id: string) {
-        let user: User = await this.userService.findOne(+id)
+        let user: User = await this.userService.findOne(id)
 
         if (user) return user
         else throw new NotFoundException()

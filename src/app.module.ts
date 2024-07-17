@@ -13,6 +13,9 @@ import { SceneModule } from './scene/scene.module';
 import { Scene } from './scene/entities/scene.entity';
 import { Screen } from './scene/entities/environment.objects/screen.entity';
 import { Stand } from './scene/entities/environment.objects/stand.entity';
+import { MessengerModule } from './messenger/messenger.module';
+import { Message } from './messenger/entities/message.entity';
+import { Channel } from './messenger/entities/channel.entity';
 
 @Module({
     imports: [
@@ -27,13 +30,14 @@ import { Stand } from './scene/entities/environment.objects/stand.entity';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            entities: [User, Scene, Screen, Stand],
+            entities: [User, Scene, Screen, Stand, Channel, Message],
             synchronize: true,
         }),
         UserModule,
         NotificationModule,
         AuthModule,
         SceneModule,
+        MessengerModule,
     ],
     controllers: [AppController],
     providers: [

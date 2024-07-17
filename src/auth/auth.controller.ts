@@ -32,6 +32,6 @@ export class AuthController {
     @UseInterceptors(ClassSerializerInterceptor)
     @Get("profile")
     async getProfile(@Request() req) {
-        return await this.userService.findOne(parseInt(req.user.userId))
+        return await this.userService.findOne(req.user.userId)
     }
 }
