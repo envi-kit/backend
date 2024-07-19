@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer'
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Message } from 'src/messenger/entities/message.entity'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 
 @Entity("users")
 export class User {
@@ -33,6 +34,9 @@ export class User {
     @Column()
     @Exclude()
     password: string
+
+    @OneToMany(() => Message, message => message.userId)
+    messages: Message[]
 
     constructor(partial: Partial<User>) {
         Object.assign(this, partial);
