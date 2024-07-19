@@ -6,6 +6,7 @@ import { Repository } from 'typeorm'
 import { Channel } from './entities/channel.entity'
 import { Message } from './entities/message.entity'
 import { UpdateChannelDto, UpdateMessageDto } from './dto/update.dto';
+import { take } from 'rxjs';
 
 @Injectable()
 export class MessengerService {
@@ -15,12 +16,14 @@ export class MessengerService {
         @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     ) {}
     
-    async getMessage() {
-        return await this.messageRepository.find();
+    async getMessage(options: any) {
+        return await this.messageRepository.find(options);
     }
 
     async createMessage(createMessageDto: CreateMessageDto) {
-        return await this.messageRepository.insert(createMessageDto);
+        let result = await this.messageRepository.insert(createMessageDto);
+        this.messengerGateway.broadcastMessage(createMessageDto);
+        return result;
     }
 
     async updateMessage(id: number, updateMessageDto: UpdateMessageDto) {
@@ -33,8 +36,8 @@ export class MessengerService {
 
 
 
-    async getChannel() {
-        return this.channelRepository.find();
+    async getChannel(options: any) {
+        return this.channelRepository.find(options);
     }
 
     async createChannel(createChannelDto: CreateChannelDto){

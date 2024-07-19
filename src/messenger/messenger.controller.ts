@@ -8,8 +8,8 @@ export class MessengerController {
     constructor(private messengerServie: MessengerService) {}
 
     @Get("message")
-    getMessage() {
-        return this.messengerServie.getMessage();
+    getMessage(@Body() options: any) {
+        return this.messengerServie.getMessage(options);
     }
     @Post("message")
     createMessage(@Body() createMessageDto: CreateMessageDto) {
@@ -25,8 +25,8 @@ export class MessengerController {
     }
 
     @Get("channel")
-    async getChannel() {
-        return await this.messengerServie.getChannel();
+    async getChannel(@Body() options: any) {
+        return await this.messengerServie.getChannel(options);
     }
     @Post("channel")
     async createChannel(@Body() createChannelDto: CreateChannelDto) {

@@ -8,6 +8,7 @@ import {
 import { MessengerService } from './messenger.service'
 import { User } from 'src/user/entities/user.entity'
 import { Server, Socket } from 'socket.io'
+import { CreateMessageDto } from './dto/create.dto'
 
 @WebSocketGateway()
 export class MessengerGateway {
@@ -18,18 +19,22 @@ export class MessengerGateway {
 
     @SubscribeMessage('messenger:connect')
     connect(@ConnectedSocket() client: Socket, @MessageBody() userdata: User) {
-        client.data = userdata
+        client.data = userdata;
     }
 
     @SubscribeMessage('messenger:join_room')
     joinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomName: string) {
-        client.rooms.clear()
-        client.join(roomName)
+        client.rooms.clear();
+        client.join(roomName);
     }
 
     @SubscribeMessage('messenger:send_message')
     sendMessage(@ConnectedSocket() client: Socket, @MessageBody() text: string) {
       this.socket.to(client.rooms[0]).emit("messenger:");
+    }
+
+    broadcastMessage(message: any) {
+        this.socket.emit('messenger:broadcast_message', message);
     }
 
     // @SubscribeMessage('createMessenger')
