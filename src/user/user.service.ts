@@ -30,11 +30,11 @@ export class UserService {
     return this.userRepository.findOneBy({ email: email })
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+  update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
     return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number): Promise<DeleteResult> {
+  remove(id: string): Promise<DeleteResult> {
     return this.userRepository.delete(id);
   }
 }

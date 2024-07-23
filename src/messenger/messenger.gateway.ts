@@ -3,19 +3,20 @@ import {
     SubscribeMessage,
     MessageBody,
     WebSocketServer,
-    ConnectedSocket
+    ConnectedSocket,
+    WsException
 } from '@nestjs/websockets'
-import { MessengerService } from './messenger.service'
 import { User } from 'src/user/entities/user.entity'
 import { Server, Socket } from 'socket.io'
 import { CreateMessageDto } from './dto/create.dto'
+import { MessengerService } from './messenger.service'
 
 @WebSocketGateway()
 export class MessengerGateway {
     @WebSocketServer()
     private socket: Server
 
-    // constructor(private messengerService: MessengerService) {}
+    constructor(private readonly messengerService: MessengerService) {}
 
     @SubscribeMessage('messenger:connect')
     connect(@ConnectedSocket() client: Socket, @MessageBody() userdata: User) {
@@ -23,42 +24,29 @@ export class MessengerGateway {
     }
 
     @SubscribeMessage('messenger:join_room')
-    joinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomName: string) {
-        client.rooms.clear();
-        client.join(roomName);
-    }
-
-    @SubscribeMessage('messenger:send_message')
-    sendMessage(@ConnectedSocket() client: Socket, @MessageBody() text: string) {
-      this.socket.to(client.rooms[0]).emit("messenger:");
+    async joinRoom(@ConnectedSocket() client: Socket, @MessageBody() channelName: string) {
+        let channel = await this.messengerService.getChannelByName(channelName);
+        
+        if (channel) {
+            client.rooms.clear();
+            client.join(channel.id);
+            return channel;
+        } else {
+            throw new WsException("Channel not found");
+        }
     }
 
     broadcastMessage(message: any) {
-        this.socket.emit('messenger:broadcast_message', message);
+        this.socket.to(message.channelId).emit('messenger:broadcast_message', message);
+        console.log(message);
     }
 
-    // @SubscribeMessage('createMessenger')
-    // create(@MessageBody() createMessengerDto: CreateMessengerDto) {
-    //   return this.messengerService.create(createMessengerDto);
-    // }
 
-    // @SubscribeMessage('findAllMessenger')
-    // findAll() {
-    //   return this.messengerService.findAll();
-    // }
+    handleDisconnect(client: Socket) {
+        console.log(`Disconnected: ${client.id}`);
+    }
 
-    // @SubscribeMessage('findOneMessenger')
-    // findOne(@MessageBody() id: number) {
-    //   return this.messengerService.findOne(id);
-    // }
-
-    // @SubscribeMessage('updateMessenger')
-    // update(@MessageBody() updateMessengerDto: UpdateMessengerDto) {
-    //   return this.messengerService.update(updateMessengerDto.id, updateMessengerDto);
-    // }
-
-    // @SubscribeMessage('removeMessenger')
-    // remove(@MessageBody() id: number) {
-    //   return this.messengerService.remove(id);
-    // }
+    handleConnection(client: Socket, ...args: any[]) {
+        console.log(`Connected ${client.id}`);
+    }
 }

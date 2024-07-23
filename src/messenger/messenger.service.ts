@@ -11,7 +11,6 @@ import { take } from 'rxjs';
 @Injectable()
 export class MessengerService {
     constructor(
-        private messengerGateway: MessengerGateway,
         @InjectRepository(Message) private messageRepository: Repository<Message>,
         @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     ) {}
@@ -21,9 +20,8 @@ export class MessengerService {
     }
 
     async createMessage(createMessageDto: CreateMessageDto) {
-        let result = await this.messageRepository.insert(createMessageDto);
-        this.messengerGateway.broadcastMessage(createMessageDto);
-        return result;
+        await this.messageRepository.insert(createMessageDto);
+        return createMessageDto;
     }
 
     async updateMessage(id: number, updateMessageDto: UpdateMessageDto) {
@@ -40,6 +38,10 @@ export class MessengerService {
         return this.channelRepository.find(options);
     }
 
+    async getChannelByName(name: string) {
+        return this.channelRepository.findOneBy({ name: name });
+    }
+    
     async createChannel(createChannelDto: CreateChannelDto){
         return this.channelRepository.save(createChannelDto);
     }
