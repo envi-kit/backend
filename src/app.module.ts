@@ -16,6 +16,7 @@ import { Stand } from './scene/entities/environment.objects/stand.entity';
 import { MessengerModule } from './messenger/messenger.module';
 import { Message } from './messenger/entities/message.entity';
 import { Channel } from './messenger/entities/channel.entity';
+import { AppGateway } from './app.gateway';
 
 @Module({
     imports: [
@@ -45,7 +46,8 @@ import { Channel } from './messenger/entities/channel.entity';
         {
             provide: APP_GUARD,
             useClass: JwtAuthGuard
-        }
+        },
+        AppGateway
     ]
 })
 export class AppModule {}

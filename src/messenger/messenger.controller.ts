@@ -36,7 +36,7 @@ export class MessengerController
             throw new BadRequestException("Channel id not provided");
 
         let insertResult = await this.messengerService.createMessage(createMessageDto); 
-        this.messengerGateway.broadcastMessage(insertResult);
+        // this.messengerGateway.broadcastMessage(insertResult);
 
         return insertResult;
     }

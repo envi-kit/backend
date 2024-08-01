@@ -2,7 +2,7 @@ import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket, WebSo
 import { NotificationService } from './notification.service'
 import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 
 @WebSocketGateway({ cors: true})
 export class NotificationGateway {

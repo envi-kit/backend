@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets'
 import { User } from 'src/user/entities/user.entity'
 import { Server, Socket } from 'socket.io'
-import { CreateMessageDto } from './dto/create.dto'
+import { CreateMessageDto } from './dto/create.dto';
 import { MessengerService } from './messenger.service'
 
 @WebSocketGateway()
@@ -18,15 +18,17 @@ export class MessengerGateway {
 
     constructor(private readonly messengerService: MessengerService) {}
 
-    @SubscribeMessage('messenger:connect')
-    connect(@ConnectedSocket() client: Socket, @MessageBody() userdata: User) {
-        client.data = userdata;
-    }
+    // @SubscribeMessage('messenger:connect')
+    // connect(@ConnectedSocket() client: Socket, @MessageBody() userdata: User) {
+    //     client.data = userdata;
+    // }
 
-    @SubscribeMessage('messenger:join_room')
+    @SubscribeMessage('messenger:joinRoom')
     async joinRoom(@ConnectedSocket() client: Socket, @MessageBody() channelName: string) {
         let channel = await this.messengerService.getChannelByName(channelName);
         
+        console.log(channel)
+
         if (channel) {
             client.rooms.clear();
             client.join(channel.id);
@@ -36,17 +38,19 @@ export class MessengerGateway {
         }
     }
 
-    broadcastMessage(message: any) {
-        this.socket.to(message.channelId).emit('messenger:broadcast_message', message);
-        console.log(message);
+    @SubscribeMessage('messenger:sendMessage')
+    async sendMessage(@ConnectedSocket() client: Socket, @MessageBody() createMessageDto: CreateMessageDto) {
+        let message = await this.messengerService.createMessage(createMessageDto);
+
+        console.log(message)
+        
+        if (message) {
+            this.socket.to(message.channelId).emit("messenger:broadcastMessage", message)
+        }
     }
 
-
-    handleDisconnect(client: Socket) {
-        console.log(`Disconnected: ${client.id}`);
-    }
-
-    handleConnection(client: Socket, ...args: any[]) {
-        console.log(`Connected ${client.id}`);
-    }
+    // broadcastMessage(message: any) {
+    //     this.socket.to(message.channelId).emit('messenger:broadcast_message', message);
+    //     console.log(message);
+    // }
 }
