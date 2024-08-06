@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { MessengerService } from './messenger.service';
 import { CreateChannelDto, CreateMessageDto } from './dto/create.dto';
 import { UpdateChannelDto, UpdateMessageDto } from './dto/update.dto';
@@ -6,28 +6,37 @@ import { ConnectedSocket } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { Channel } from './entities/channel.entity';
 import { MessengerGateway } from './messenger.gateway';
+import { take } from 'rxjs';
+import { query } from 'express';
 
 
 @Controller('messenger')
-export class MessengerController 
-{
+export class MessengerController {
+
+    private readonly DEFAULT_LIMIT = 50;
+
     constructor(
         private messengerService: MessengerService,
         private messengerGateway: MessengerGateway
     ) {}
 
-    // @Post("connect/:channelName")
-    // async connectToChannel(@ConnectedSocket() client: Socket, @Param('channelName') channelName: string) {
-    //     let channel: Channel = await this.messengerService.getChannelByName(channelName);
-
-    //     if (!channel)
-    //         throw new BadRequestException()
-
-    //     return channel;
-    // }
 
     @Get("message")
     getMessage(@Body() options: any) {
+        return this.messengerService.getMessage(options);
+    }
+    @Get("message/channel/:id")
+    getMessageFromChannel(@Param("id") channelId: string, @Query() query: any) {
+        let options = {
+            where: {
+                channelId: channelId
+            },
+            order: {
+                id: "ASC"
+            },
+            take: query.limit ? query.limit : this.DEFAULT_LIMIT
+        }
+
         return this.messengerService.getMessage(options);
     }
     @Post("message")
@@ -36,7 +45,7 @@ export class MessengerController
             throw new BadRequestException("Channel id not provided");
 
         let insertResult = await this.messengerService.createMessage(createMessageDto); 
-        // this.messengerGateway.broadcastMessage(insertResult);
+        this.messengerGateway.broadcastMessage(insertResult);
 
         return insertResult;
     }
@@ -48,8 +57,8 @@ export class MessengerController
     deleteMessage(@Param('id') id: number) {
         return this.messengerService.deleteMessage(id);
     }
-
     
+
     @Get("channel")
     async getChannel(@Body() options: any) {
         return await this.messengerService.getChannel(options);

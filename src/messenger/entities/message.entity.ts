@@ -1,5 +1,5 @@
 import { MaxLength } from "class-validator";
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 import { Channel } from "./channel.entity";
 import { User } from "src/user/entities/user.entity";
 
@@ -17,6 +17,9 @@ export class Message {
     @Column({ default: ""})
     @MaxLength(255)
     text: string
+
+    @CreateDateColumn()
+    createdAt: Date
 
     @ManyToOne(() => Channel, (channel) => channel.messages)
     channel: Channel

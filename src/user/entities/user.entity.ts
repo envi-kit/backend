@@ -19,7 +19,7 @@ export class User {
     @Column({ default: 'default.png' })
     iconPicture: string
 
-    @Column({ default: 'en' })
+    @Column({ default: '' })
     language: string
 
     @Column({ default: true })
