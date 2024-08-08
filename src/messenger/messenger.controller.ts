@@ -34,7 +34,18 @@ export class MessengerController {
             order: {
                 id: "ASC"
             },
-            take: query.limit ? query.limit : this.DEFAULT_LIMIT
+            take: query.limit ? query.limit : this.DEFAULT_LIMIT,
+            relations: {
+                user: true,
+            },
+            select: {
+                id: true,
+                text: true,
+                createdAt: true,
+                user: {
+                    name: true
+                }
+            }
         }
 
         return this.messengerService.getMessage(options);
