@@ -9,6 +9,9 @@ export class Channel {
     @Column({ unique: true })
     name: string
 
+    @Column({unique: true})
+    pretty_name: string
+
     @OneToMany(() => Message, message => message.channel)
     messages: Message[]
 }

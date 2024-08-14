@@ -10,6 +10,7 @@ import { User } from 'src/user/entities/user.entity'
 import { Server, Socket } from 'socket.io'
 import { CreateMessageDto } from './dto/create.dto';
 import { MessengerService } from './messenger.service'
+import { InsertResult } from 'typeorm';
 
 @WebSocketGateway({ cors: true })
 export class MessengerGateway {
@@ -44,10 +45,11 @@ export class MessengerGateway {
     }
     @SubscribeMessage('messenger:sendMessage')
     async sendMessage(@ConnectedSocket() client: Socket, @MessageBody() createMessageDto: CreateMessageDto) {
-        let message = await this.messengerService.createMessage(createMessageDto)
+        let insertResult = await this.messengerService.createMessage(createMessageDto);
+        let message = await this.messengerService.getMessageById(insertResult.raw.insertId);
         
         if (message) {
-            this.socket.to(message.channelId).emit("messenger:broadcastMessage", message)
+            this.socket.to(createMessageDto.channelId).emit("messenger:broadcastMessage", message)
         }
     }
 

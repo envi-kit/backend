@@ -17,4 +17,7 @@ export class CreateChannelDto {
     @IsNotEmpty()
     @IsString()
     name: string
+
+    @IsString()
+    pretty_name: string
 }

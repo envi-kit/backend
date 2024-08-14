@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { CreateChannelDto, CreateMessageDto } from './dto/create.dto';
-import { MessengerGateway } from './messenger.gateway'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Channel } from './entities/channel.entity'
 import { Message } from './entities/message.entity'
 import { UpdateChannelDto, UpdateMessageDto } from './dto/update.dto';
-import { take } from 'rxjs';
 
 @Injectable()
 export class MessengerService {
@@ -16,12 +14,28 @@ export class MessengerService {
     ) {}
     
     async getMessage(options: any) {
-        return await this.messageRepository.find(options);
+        return (await this.messageRepository.find(options)).reverse();
+    }
+
+    async getMessageById(id: number) {
+        return await this.messageRepository.findOne({
+            where: { id: id },
+            relations: {
+                user: true,
+            },
+            select: {
+                id: true,
+                text: true,
+                createdAt: true,
+                user: {
+                    name: true
+                }
+            }
+        });
     }
 
     async createMessage(createMessageDto: CreateMessageDto) {
-        await this.messageRepository.insert(createMessageDto);
-        return createMessageDto;
+        return await this.messageRepository.insert(createMessageDto);
     }
 
     async updateMessage(id: number, updateMessageDto: UpdateMessageDto) {

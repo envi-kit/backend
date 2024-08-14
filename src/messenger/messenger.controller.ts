@@ -8,12 +8,13 @@ import { Channel } from './entities/channel.entity';
 import { MessengerGateway } from './messenger.gateway';
 import { take } from 'rxjs';
 import { query } from 'express';
+import { LessThan, LessThanOrEqual } from 'typeorm';
 
 
 @Controller('messenger')
 export class MessengerController {
 
-    private readonly DEFAULT_LIMIT = 50;
+    private readonly DEFAULT_LIMIT = 10;
 
     constructor(
         private messengerService: MessengerService,
@@ -29,10 +30,11 @@ export class MessengerController {
     getMessageFromChannel(@Param("id") channelId: string, @Query() query: any) {
         let options = {
             where: {
-                channelId: channelId
+                channelId: channelId,
+                id: query.lastMessageId ? LessThan(query.lastMessageId) : null
             },
             order: {
-                id: "ASC"
+                id: "DESC"
             },
             take: query.limit ? query.limit : this.DEFAULT_LIMIT,
             relations: {
