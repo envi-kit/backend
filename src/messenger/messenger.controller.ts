@@ -14,7 +14,7 @@ import { LessThan, LessThanOrEqual } from 'typeorm';
 @Controller('messenger')
 export class MessengerController {
 
-    private readonly DEFAULT_LIMIT = 10;
+    private readonly DEFAULT_LIMIT = 50;
 
     constructor(
         private messengerService: MessengerService,
