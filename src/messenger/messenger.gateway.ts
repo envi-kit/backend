@@ -47,7 +47,7 @@ export class MessengerGateway {
     async sendMessage(@ConnectedSocket() client: Socket, @MessageBody() createMessageDto: CreateMessageDto) {
         let insertResult = await this.messengerService.createMessage(createMessageDto);
         let message = await this.messengerService.getMessageById(insertResult.raw.insertId);
-        
+                
         if (message) {
             this.socket.to(createMessageDto.channelId).emit("messenger:broadcastMessage", message)
         }

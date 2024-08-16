@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 // create-user-dto
 export class CreateUserDto {
@@ -10,18 +10,23 @@ export class CreateUserDto {
     email: string
 
     @IsString()
+    @IsOptional()
     avatarModelName: string
 
     @IsString()
+    @IsOptional()
     iconPicture: string
 
     @IsString()
+    @IsOptional()
     language: string
 
     @IsBoolean()
+    @IsOptional()
     showNicknames: boolean
 
     @IsBoolean()
+    @IsOptional()
     enableMusic: boolean
 
     @IsString()

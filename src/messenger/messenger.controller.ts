@@ -45,6 +45,7 @@ export class MessengerController {
                 text: true,
                 createdAt: true,
                 user: {
+                    id: true,
                     name: true
                 }
             }

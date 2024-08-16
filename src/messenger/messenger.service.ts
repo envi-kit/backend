@@ -28,6 +28,7 @@ export class MessengerService {
                 text: true,
                 createdAt: true,
                 user: {
+                    id: true,
                     name: true
                 }
             }
