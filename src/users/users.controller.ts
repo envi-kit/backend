@@ -5,13 +5,14 @@ import {
     Get,
     Param,
     Patch,
-    Post, UseGuards,
+    Post,
+    UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -33,15 +34,15 @@ export class UsersController {
     }
 
     @Post()
-
     async createUser(@Body() userData: Partial<User>): Promise<User> {
         return this.usersService.create(userData);
     }
 
     @Patch(':id')
+    @ApiBody({ type: UpdateUserDto })
     async updateUser(
         @Param('id') id: string,
-        @Body() userData: Partial<User>,
+        @Body() userData: UpdateUserDto,
     ): Promise<User | null> {
         return this.usersService.update(id, userData);
     }

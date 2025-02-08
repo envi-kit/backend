@@ -61,8 +61,6 @@ export class AuthService {
     async validateUserByCredentials(email: string, password: string): Promise<User | null> {
         const user = await this.usersService.findByEmail(email);
 
-        console.log(user);
-
         if (!user) return null;
 
         const isPasswordValid = await bcrypt.compare(password, user.passwordHash);

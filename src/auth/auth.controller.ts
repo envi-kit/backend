@@ -2,7 +2,6 @@ import {
     Body,
     Controller,
     Get,
-    Patch,
     Post,
     Req,
     Res,
@@ -10,7 +9,6 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from '../users/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -27,24 +25,24 @@ export class AuthController {
         private readonly usersService: UsersService,
     ) {}
 
-    @Get('google')
-    @UseGuards(GoogleAuthGuard)
-    async googleAuth() {}
-
-    @Get('google/redirect')
-    @UseGuards(GoogleAuthGuard)
-    async googleAuthRedirect(@CurrentUser() user: User, @Res() res: Response) {
-        const { accessToken, refreshToken } =
-            await this.authService.login(user);
-
-        res.cookie('refresh_token', refreshToken, {
-            httpOnly: true,
-        });
-
-        return res.json({
-            access_token: accessToken,
-        });
-    }
+    // @Get('google')
+    // @UseGuards(GoogleAuthGuard)
+    // async googleAuth() {}
+    //
+    // @Get('google/redirect')
+    // @UseGuards(GoogleAuthGuard)
+    // async googleAuthRedirect(@CurrentUser() user: User, @Res() res: Response) {
+    //     const { accessToken, refreshToken } =
+    //         await this.authService.login(user);
+    //
+    //     res.cookie('refresh_token', refreshToken, {
+    //         httpOnly: true,
+    //     });
+    //
+    //     return res.json({
+    //         access_token: accessToken,
+    //     });
+    // }
 
     @Get('refresh')
     async refresh(@Req() req: Request, @Res() res: Response) {
@@ -106,13 +104,14 @@ export class AuthController {
         return res.json({ access_token: accessToken });
     }
 
-    @Patch('set-password')
-    @UseGuards(JwtAuthGuard)
-    async setPassword(
-        @CurrentUser() user: User,
-        @Body('password') password: string,
-    ) {
-        await this.authService.setPassword(user.id, password);
-        return { message: 'Password has been updated' };
-    }
+    // IN PROGRESS
+    // @Patch('set-password')
+    // @UseGuards(JwtAuthGuard)
+    // async setPassword(
+    //     @CurrentUser() user: User,
+    //     @Body('password') password: string,
+    // ) {
+    //     await this.authService.setPassword(user.id, password);
+    //     return { message: 'Password has been updated' };
+    // }
 }
