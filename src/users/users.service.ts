@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -35,5 +36,16 @@ export class UsersService {
     async delete(id: string): Promise<boolean> {
         const result = await this.usersRepository.delete(id);
         return result.affected > 0;
+    }
+
+    async register(email: string, name: string, password: string): Promise<User> {
+        const existingUser = await this.usersRepository.findOne({ where: { email } });
+
+        if (existingUser) throw new Error('User with same email already exist');
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const user = this.usersRepository.create({ email, name, passwordHash });
+
+        return this.usersRepository.save(user);
     }
 }

@@ -11,8 +11,11 @@ export class User {
     @Column()
     name: string
 
-    @Column()
+    @Column({ nullable: true })
     picture: string;
+
+    @Column({ nullable: true })
+    passwordHash?: string;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
