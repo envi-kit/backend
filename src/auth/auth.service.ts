@@ -18,32 +18,35 @@ export class AuthService {
 
         const accessToken: string = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_SECRET'),
-            expiresIn: '15m'
+            expiresIn: this.configService.get('JWT_ACCESS_EXPIRE') ?? '15m'
         })
         const refreshToken: string = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_SECRET'),
-            expiresIn: '7d'
+            expiresIn: this.configService.get('JWT_REFRESH_EXPIRE') ?? '7d'
         })
 
         return { accessToken, refreshToken };
     }
 
     async refreshTokens(refreshToken: string) {
+        let payload: any;
+
         try {
-            const payload = this.jwtService.verify(refreshToken, {
+            payload = this.jwtService.verify(refreshToken, {
                 secret: this.configService.get<string>('JWT_SECRET')
             });
-            const user = await this.usersService.findById(payload.sub);
-
-            if (!user) {
-                throw new NotFoundException('User not found');
-            }
-
-            return this.login(user);
         }
         catch (e) {
             throw new Error('Invalid refresh token');
         }
+
+        const user = await this.usersService.findById(payload.sub);
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        return this.login(user);
     }
 
     async setPassword(id: string, password: string) {

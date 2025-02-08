@@ -16,7 +16,10 @@ import { User } from '../users/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Request, Response } from 'express';
 import { UsersService } from '../users/users.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+
+@ApiExcludeController()
 @Controller('auth')
 export class AuthController {
     constructor(
