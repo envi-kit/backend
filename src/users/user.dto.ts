@@ -14,8 +14,12 @@ export class UserDto {
     @IsEmail()
     email: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: 'default.png'})
     @IsString()
     picture: string;
+
+    @ApiProperty({ example: '{"avatar":"Male01"}' })
+    @IsString()
+    settings: string
 }
 export class UpdateUserDto extends PartialType(UserDto) {}

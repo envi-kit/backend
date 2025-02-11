@@ -47,6 +47,15 @@ export class UsersController {
         return this.usersService.update(id, userData);
     }
 
+    @Patch('/settings/:id')
+    @ApiBody({ type: UpdateUserDto })
+    async updateUserSettings(
+        @Param('id') id: string,
+        @Body() settings: any,
+    ) {
+        return this.usersService.updateSettings(id, JSON.stringify(settings));
+    }
+
     @Delete(':id')
     async deleteUser(@Param('id') id: string): Promise<boolean> {
         return this.usersService.delete(id);
