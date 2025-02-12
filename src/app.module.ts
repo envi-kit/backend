@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, AnalyticsModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
@@ -24,5 +25,6 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AuthModule,
     AnalyticsModule,
   ],
+  providers: [AppGateway],
 })
 export class AppModule {}
