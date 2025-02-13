@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { AnalyticsEvent } from './analytics-event.model';
+import { AnalyticsEvent } from './model/analytics-event.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventType } from './enum/EventType';
 
@@ -12,10 +12,18 @@ export class AnalyticsService {
     ) {}
 
     async create(senderUuid: string, event: EventType): Promise<AnalyticsEvent> {
-        const newEvent = new AnalyticsEvent();
-        newEvent.sender = senderUuid;
-        newEvent.event = event;
+        const createdEvent = this.analyticsEventsRepository.create({
+            sender: senderUuid,
+            event: event
+        });
 
-        return this.analyticsEventsRepository.save(newEvent);
+        return this.analyticsEventsRepository.save(createdEvent);
+    }
+
+    async find(limit: number, offset: number): Promise<AnalyticsEvent[]> {
+        return this.analyticsEventsRepository.find({
+            take: limit,
+            skip: offset
+        });
     }
 }

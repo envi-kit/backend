@@ -5,7 +5,6 @@ import {
     Get,
     Param,
     Patch,
-    Post,
     UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -33,10 +32,11 @@ export class UsersController {
         return this.usersService.findById(id);
     }
 
-    @Post()
-    async createUser(@Body() userData: Partial<User>): Promise<User> {
-        return this.usersService.create(userData);
-    }
+    // Can be created only through register
+    // @Post()
+    // async createUser(@Body() userData: Partial<User>): Promise<User> {
+    //     return this.usersService.create(userData);
+    // }
 
     @Patch(':id')
     @ApiBody({ type: UpdateUserDto })

@@ -5,7 +5,7 @@ import {
     Index,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EventType } from './enum/EventType';
+import { EventType } from '../enum/EventType';
 
 @Entity({ name: 'analytic_events' })
 export class AnalyticsEvent {

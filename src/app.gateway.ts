@@ -6,6 +6,7 @@ import { Server, Socket } from 'socket.io';
 import { AnalyticsService } from './analytics/analytics.service';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
+import { EventType } from './analytics/enum/EventType';
 
 @WebSocketGateway({
     cors: {
@@ -30,34 +31,23 @@ export class AppGateway {
             return;
         }
 
-        const secret = this.configService.get<string>('JWT_SECRET');
-        const payload = jwt.verify(token, secret) as { sub: string };
+        const payload = jwt.verify(
+            token, this.configService.get<string>('JWT_SECRET')) as { sub: string };
 
         if (!payload?.sub) {
             client.disconnect();
             return;
         }
-        //
-        // await this.analyticsService.create(client.data.userId, EventType.UserConnected);
 
         client.data.userId = payload.sub;
+
+        await this.analyticsService.create(client.data.userId, EventType.UserConnected);
 
         console.log('Client connected', client.data.userId);
     }
 
     async handleDisconnect(client: Socket) {
+        await this.analyticsService.create(client.data.userId, EventType.UserDisconnected);
         console.log('Client disconnected', client.data.userId);
     }
-
-    // private getUuidFromJwt(client: Socket) {
-    //     try {
-    //         const token = client.handshake.headers.authorization?.split(' ')[1];
-    //
-    //         if (!token) return null;
-    //
-    //         const decodingResult = jwt.decode(token, this.configService.get('JWT_SECRET'));
-    //
-    //         return decodingResult;
-    //     }
-    // }
 }
